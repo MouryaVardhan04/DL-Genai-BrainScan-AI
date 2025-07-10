@@ -1,0 +1,6 @@
+streamlit
+notebook
+tensorflow
+keras
+torch
+torchvision 
