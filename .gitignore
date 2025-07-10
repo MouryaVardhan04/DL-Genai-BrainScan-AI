@@ -1,3 +1,9 @@
+# Ignore datasets and other large folders
 Datasets/
-datasets/
+__pycache__/
+.ipynb_checkpoints/
 venv/
+*.h5
+*.pt
+*.pkl
+*.zip
