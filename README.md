@@ -1,4 +1,4 @@
-# BrainScan - (Brain Tumor Detection Web Application)
+# BrainScan AI - (Brain Tumor Detection Web Application)
 
 A modern, AI-powered web application for detecting brain tumors from MRI scans. Upload an MRI image and receive an instant, detailed medical report with diagnosis, confidence, treatment suggestions, and more—all in a beautiful dark-themed interface.
 
