@@ -3,4 +3,16 @@ notebook
 tensorflow
 keras
 torch
-torchvision 
+torchvision
+openai
+langchain
+langchain-openai
+langchain-community
+python-dotenv
+pyPDF2
+flask
+pillow
+scikit-learn
+numpy
+matplotlib
+seaborn

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Tumor Detection</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <span>BrainScan AI</span>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="upload-section">
+                <div class="upload-layout">
+                    <!-- Left Side - Upload Form -->
+                    <div class="upload-form-container">
+                        <h1>Brain Tumor Detection</h1>
+                        <p>Upload an MRI scan to analyze for brain tumors using advanced AI</p>
+                        
+                        <form method="POST" enctype="multipart/form-data" class="upload-form" id="upload-form">
+                            <div class="file-upload-area">
+                                <input type="file" id="file" name="file" accept="image/*" required onchange="previewImage(this)">
+                                <label for="file" class="file-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Choose MRI Image</span>
+                                </label>
+                            </div>
+                            <button type="submit" class="analyze-btn" id="analyze-btn">
+                                <i class="fas fa-search"></i>
+                                <span>Analyze Image</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right Side - Image Preview -->
+                    <div class="preview-container" id="preview-container" style="display: none;">
+                        <h3><i class="fas fa-eye"></i> MRI Preview</h3>
+                        <div class="preview-wrapper">
+                            <div id="image-preview" class="image-preview">
+                                <i class="fas fa-image"></i>
+                                <p>Select an MRI image to preview</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Animation -->
+            <div id="loading-container" class="loading-container" style="display: none;">
+                <div class="loading-content">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                    <h3>Analyzing MRI Scan...</h3>
+                    <p>Please wait while our AI processes your image</p>
+                </div>
+            </div>
+
+            {% if result %}
+            <div class="results-container">
+                <div class="result-summary">
+                    <h2>Analysis Results</h2>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <i class="fas fa-microscope"></i>
+                            <div class="result-info">
+                                <span class="label">Detection</span>
+                                <span class="value">{{ result }}</span>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <i class="fas fa-chart-line"></i>
+                            <div class="result-info">
+                                <span class="label">Confidence</span>
+                                <span class="value">{{ confidence }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if medical_report %}
+                <div class="analysis-layout">
+                    <!-- MRI Image Section -->
+                    <div class="image-section">
+                        {% if file_path %}
+                        <div class="mri-image-container">
+                            <h3><i class="fas fa-image"></i> MRI Scan</h3>
+                            <div class="image-wrapper">
+                                <img src="{{ file_path }}" alt="Uploaded MRI Scan">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Medical Report Section -->
+                    <div class="report-section">
+                        <div class="report-header">
+                            <h3><i class="fas fa-file-medical"></i> Medical Report</h3>
+                            <span class="date">{{ medical_report.diagnosis_date }}</span>
+                        </div>
+
+                        <!-- Diagnosis -->
+                        <div class="report-section">
+                            <h4><i class="fas fa-brain"></i> Diagnosis</h4>
+                            <div class="diagnosis-grid">
+                                <div class="diagnosis-item">
+                                    <span class="label">Type</span>
+                                    <span class="value">{{ medical_report.tumor_diagnosis.tumor_type }}</span>
+                                </div>
+                                <div class="diagnosis-item">
+                                    <span class="label">Confidence</span>
+                                    <span class="value">{{ medical_report.tumor_diagnosis.confidence_score }}</span>
+                                </div>
+                                {% if medical_report.tumor_diagnosis.severity_level %}
+                                <div class="diagnosis-item">
+                                    <span class="label">Severity</span>
+                                    <span class="value severity-{{ medical_report.tumor_diagnosis.severity_level.lower() }}">
+                                        {{ medical_report.tumor_diagnosis.severity_level }}
+                                    </span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if medical_report.tumor_diagnosis.condition %}
+                            <p class="condition">{{ medical_report.tumor_diagnosis.condition }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Treatment -->
+                        {% if medical_report.tumor_diagnosis.treatment %}
+                        <div class="report-section">
+                            <h4><i class="fas fa-stethoscope"></i> Treatment</h4>
+                            <div class="treatment-grid">
+                                {% if medical_report.tumor_diagnosis.treatment.surgery %}
+                                <div class="treatment-item">
+                                    <h5><i class="fas fa-user-md"></i> Surgery</h5>
+                                    <p>{{ medical_report.tumor_diagnosis.treatment.surgery }}</p>
+                                </div>
+                                {% endif %}
+                                {% if medical_report.tumor_diagnosis.treatment.radiation %}
+                                <div class="treatment-item">
+                                    <h5><i class="fas fa-radiation"></i> Radiation</h5>
+                                    <p>{{ medical_report.tumor_diagnosis.treatment.radiation }}</p>
+                                </div>
+                                {% endif %}
+                                {% if medical_report.tumor_diagnosis.treatment.chemotherapy %}
+                                <div class="treatment-item">
+                                    <h5><i class="fas fa-pills"></i> Chemotherapy</h5>
+                                    <p>{{ medical_report.tumor_diagnosis.treatment.chemotherapy }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Precautions -->
+                        {% if medical_report.tumor_diagnosis.precautions %}
+                        <div class="report-section">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Precautions</h4>
+                            <ul class="precautions-list">
+                                {% for precaution in medical_report.tumor_diagnosis.precautions %}
+                                <li>{{ precaution }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <!-- Doctor -->
+                        {% if medical_report.tumor_diagnosis.consult_doctor %}
+                        <div class="report-section">
+                            <h4><i class="fas fa-user-md"></i> Recommended Specialist</h4>
+                            <div class="doctor-card">
+                                <i class="fas fa-user-md"></i>
+                                <span>{{ medical_report.tumor_diagnosis.consult_doctor }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Explanation -->
+                        {% if medical_report.tumor_diagnosis.explanation %}
+                        <div class="report-section">
+                            <h4><i class="fas fa-robot"></i> AI Analysis</h4>
+                            <p>{{ medical_report.tumor_diagnosis.explanation }}</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Report Actions -->
+                        <div class="report-actions">
+                            <button class="btn btn-secondary" onclick="downloadReport()">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-primary" onclick="printReport()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script src="../static/script.js"></script>
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            const previewContainer = document.getElementById('preview-container');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px;">`;
+                    previewContainer.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.innerHTML = `
+                    <i class="fas fa-image"></i>
+                    <p>Select an MRI image to preview</p>
+                `;
+                previewContainer.style.display = 'none';
+            }
+        }
+
+        // Loading animation functionality
+        document.getElementById('upload-form').addEventListener('submit', function() {
+            const loadingContainer = document.getElementById('loading-container');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const btnText = analyzeBtn.querySelector('span');
+            const btnIcon = analyzeBtn.querySelector('i');
+            
+            // Show loading animation
+            loadingContainer.style.display = 'flex';
+            
+            // Update button state
+            analyzeBtn.disabled = true;
+            btnText.textContent = 'Analyzing...';
+            btnIcon.className = 'fas fa-spinner fa-spin';
+            
+            // Scroll to loading animation
+            loadingContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle i');
+            
+            if (body.classList.contains('dark-theme')) {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                themeToggle.className = 'fas fa-sun';
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                themeToggle.className = 'fas fa-moon';
+            }
+        }
+    </script>
+</body>
+</html>
