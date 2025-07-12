@@ -71,12 +71,16 @@ Brain_Tumor/
 
 ---
 
-## Technologies Used
+## 🛠️ Technologies Used
+
 - **Python 3**
-- **Flask** (web framework)
-- **TensorFlow/Keras** or **PyTorch** (for model, as applicable)
-- **HTML5, CSS3, JavaScript** (frontend)
-- **Font Awesome** (icons)
+- **Flask** – Web framework
+- **TensorFlow / PyTorch** – Deep learning models
+- **LangChain** – LLM application framework
+- **OpenAI API** – Generative AI integration
+- **HTML5, CSS3, JavaScript** – Frontend
+- **Font Awesome** – Icons
+
 
 ---
 
