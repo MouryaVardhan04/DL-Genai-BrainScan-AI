@@ -91,4 +91,4 @@ Pull requests and suggestions are welcome! Please open an issue or submit a PR.
 ---
 
 ## Contact
-For questions or support, please contact the project maintainer. 
+For questions or support, please contact the project maintainer.
